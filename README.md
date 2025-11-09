@@ -61,6 +61,12 @@ DEFAULT_FROM_EMAIL = 'your-email@gmail.com'
 ADMIN_EMAIL = 'admin@example.com'  # For reminder notifications
 ```
 
+### Step 8: Insert Dummy Data
+
+```
+python manage.py insert_dummy_data.py
+```
+
 ## Authentication
 
 ### JWT Authentication
@@ -134,6 +140,13 @@ Request Body:
 - **Refresh Token Lifetime**: 7 days
 - **Token Rotation**: Enabled
 - **Header Format**: `Authorization: Bearer <token>`
+
+
+### Add Cron Jobs to send expired and payment due emails
+
+```
+0 9 * * * python manage.py check_reminders 15
+```
 
 ## API Documentation
 
