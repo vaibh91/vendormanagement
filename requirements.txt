@@ -1,0 +1,14 @@
+# Django and core dependencies
+Django==5.2.8
+asgiref==3.10.0
+sqlparse==0.5.3
+
+# Django REST Framework
+djangorestframework==3.16.1
+
+# JWT Authentication
+djangorestframework-simplejwt==5.5.1
+PyJWT==2.10.1
+
+# Panadas for dummy data
+pandas==2.3.3

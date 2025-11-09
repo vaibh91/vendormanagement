@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Management - Dashboard</title>
+    <link rel="stylesheet" href="/static/vendormanagement/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h2>Vendor Management System</h2>
+            <div class="nav-links">
+                <a href="#" onclick="showDashboard()" class="nav-link active">Dashboard</a>
+                <a href="#" onclick="showVendors()" class="nav-link">Vendors</a>
+                <a href="#" onclick="showServices()" class="nav-link">Services</a>
+                <a href="#" onclick="checkReminders()" class="nav-link">Check Reminders</a>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view active">
+            <h1>Dashboard</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Vendors</h3>
+                    <p id="totalVendors">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Services</h3>
+                    <p id="activeServices">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Expiring Soon</h3>
+                    <p id="expiringSoon">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Payment Due</h3>
+                    <p id="paymentDue">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Expired</h3>
+                    <p id="expiredServices">-</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Recent Vendors</h2>
+                <div id="recentVendors" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Vendors View -->
+        <div id="vendorsView" class="view">
+            <div class="view-header">
+                <h1>Vendors</h1>
+                <button onclick="showAddVendor()" class="btn btn-primary">+ Add Vendor</button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="vendorSearch" placeholder="Search vendors..." onkeyup="filterVendors()">
+                <select id="vendorStatusFilter" onchange="filterVendors()">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <select id="vendorPageSize" onchange="changeVendorPageSize()" title="Items per page">
+                    <option value="10">10 per page</option>
+                    <option value="20" selected>20 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
+            </div>
+            
+            <div id="vendorsList" class="table-container"></div>
+            <div id="vendorsPagination" class="pagination"></div>
+        </div>
+
+        <!-- Services View -->
+        <div id="servicesView" class="view">
+            <div class="view-header">
+                <h1>Services</h1>
+                <button onclick="showAddService()" class="btn btn-primary">+ Add Service</button>
+            </div>
+            
+            <div class="filters">
+                <input type="text" id="serviceSearch" placeholder="Search services..." onkeyup="filterServices()">
+                <select id="serviceStatusFilter" onchange="filterServices()">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Expiring Soon">Expiring Soon</option>
+                </select>
+                <select id="servicePageSize" onchange="changeServicePageSize()" title="Items per page">
+                    <option value="10">10 per page</option>
+                    <option value="20" selected>20 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
+            </div>
+            
+            <div id="servicesList" class="table-container"></div>
+            <div id="servicesPagination" class="pagination"></div>
+        </div>
+    </div>
+
+    <!-- Vendor Modal -->
+    <div id="vendorModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('vendorModal')">&times;</span>
+            <h2 id="vendorModalTitle">Add Vendor</h2>
+            <form id="vendorForm" onsubmit="saveVendor(event)">
+                <input type="hidden" id="vendorId">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="vendorName" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Person *</label>
+                    <input type="text" id="vendorContact" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="vendorEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone *</label>
+                    <input type="text" id="vendorPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="vendorStatus" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal('vendorModal')" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Service Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('serviceModal')">&times;</span>
+            <h2 id="serviceModalTitle">Add Service</h2>
+            <form id="serviceForm" onsubmit="saveService(event)">
+                <input type="hidden" id="serviceId">
+                <div class="form-group">
+                    <label>Vendor *</label>
+                    <select id="serviceVendor" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Service Name *</label>
+                    <input type="text" id="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="date" id="serviceStartDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date *</label>
+                    <input type="date" id="serviceExpiryDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Due Date *</label>
+                    <input type="date" id="servicePaymentDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Amount *</label>
+                    <input type="number" step="0.01" id="serviceAmount" required>
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="serviceStatus" required>
+                        <option value="Active">Active</option>
+                        <option value="Expired">Expired</option>
+                        <option value="Payment Pending">Payment Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal('serviceModal')" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/vendormanagement/js/api.js"></script>
+    <script src="/static/vendormanagement/js/dashboard.js"></script>
+</body>
+</html>
+
