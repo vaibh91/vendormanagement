@@ -145,7 +145,7 @@ Request Body:
 ### Add Cron Jobs to send expired and payment due emails
 
 ```
-0 9 * * * python manage.py check_reminders 15
+0 9 * * * /path/to/assignment/venv/bin/python manage.py check_reminders --days 15
 ```
 
 ## API Documentation
